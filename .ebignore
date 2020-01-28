@@ -1,0 +1,7 @@
+/client
+/nginx
+/server
+/worker
+docker-compose.yml
+.travis.yml
+.DS_Store
