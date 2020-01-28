@@ -1,0 +1,22 @@
+language: generic
+sudo: required
+services:
+  - docker
+before_install:
+  - docker build -t discorev/react-test -f ./client/Dockerfile.dev ./client
+
+script:
+  - docker run -e CI=true discorev/react-test npm run test
+
+after_success:
+  - docker build -t discorev/multi-client ./client
+  - docker build -t discorev/multi-nginx ./nginx
+  - docker build -t discorev/multi-server ./server
+  - docker build -t discorev/multi-worker ./worker
+  # Log in to the docker CLI
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  # Take those images and push them to docker hub
+  - docker push discorev/multi-client
+  - docker push discorev/multi-nginx
+  - docker push discorev/multi-server
+  - docker push discorev/multi-worker
